@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SECOP Radar Pro - Licitaciones y Contratación Pública</title>
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #f0f9ff;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --amber: #d97706;
+      --amber-bg: #fef3c7;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); padding-bottom: 70px; line-height: 1.5; }
+
+    header {
+      background: #0f172a;
+      color: white;
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .header-inner {
+      max-width: 1350px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.3px; }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .live-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 6px #22c55e; }
+    .btn-secop-direct {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      text-decoration: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-secop-direct:hover { background: #334155; color: white; }
+
+    .container { max-width: 1350px; margin: 24px auto; padding: 0 16px; }
+
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+    .metric-val { font-size: 1.35rem; font-weight: 800; color: var(--text-main); }
+    .metric-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+    .filter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+    }
+    .filter-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .filter-card-title { font-size: 1rem; font-weight: 700; color: #1e293b; }
+
+    .quick-search { display: flex; gap: 10px; margin-bottom: 18px; }
+    .quick-search input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .quick-search input:focus { border-color: var(--primary); }
+
+    .grid-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      outline: none;
+      background: #fff;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+    }
+    .field-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 3px; }
+
+    .actions-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-main { background: var(--primary); color: white; }
+    .btn-main:hover { background: var(--primary-hover); }
+    .btn-sec { background: #f1f5f9; color: #334155; border: 1px solid var(--border); }
+    .btn-sec:hover { background: #e2e8f0; }
+
+    #lblStatus { font-size: 0.92rem; font-weight: 600; color: #334155; margin-bottom: 16px; }
+
+    .contracts-list { display: flex; flex-direction: column; gap: 16px; }
+    .contract-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .contract-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: #93c5fd;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-modalidad { background: #e0f2fe; color: #0369a1; }
+    .badge-tipo { background: #f1f5f9; color: #475569; }
+    .badge-abierto { background: var(--green-bg); color: var(--green); }
+    .badge-fase { background: var(--amber-bg); color: var(--amber); }
+
+    .card-ref { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.8rem; color: #64748b; font-weight: 600; }
+    .card-title { font-size: 1.12rem; font-weight: 700; color: #0f172a; line-height: 1.4; }
+    .card-desc {
+      font-size: 0.88rem;
+      color: #475569;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 8px;
+      gap: 10px;
+      font-size: 0.85rem;
+      border: 1px solid #f1f5f9;
+    }
+    .meta-grid strong { display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .price-tag strong { display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+    .price-val { font-size: 1.3rem; font-weight: 800; color: var(--green); }
+
+    .btn-actions { display: flex; gap: 8px; }
+    .btn-direct {
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn-direct:hover { background: var(--primary-hover); }
+    .btn-copy {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: #334155;
+      padding: 9px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-copy:hover { background: #e2e8f0; }
+
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>SECOP Radar Pro</h1>
+        <span class="live-badge"><span class="live-dot"></span> SECOP II Oficial</span>
+      </div>
+      <div>
+        <a href="https://community.secop.gov.co/Public/Tendering/ContractNoticeManagement/Index" target="_blank" rel="noreferrer" class="btn-secop-direct">
+          Portal Transaccional en Vivo ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <div class="metric-label">Procesos Ofertables</div>
+        <div class="metric-val" id="metricCount">0</div>
+        <div class="metric-sub">Licitaciones disponibles</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Presupuesto Oficial Acumulado</div>
+        <div class="metric-val" id="metricTotal">$ 0</div>
+        <div class="metric-sub">Suma de cuantías de la búsqueda</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cuantía Promedio</div>
+        <div class="metric-val" id="metricAvg">$ 0</div>
+        <div class="metric-sub">Por proceso licitado</div>
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-card-header">
+        <div class="filter-card-title">Filtros de Búsqueda de Licitaciones</div>
+        <span style="font-size: 0.8rem; color: #15803d; font-weight: 600;">✓ Modo Competitivo (Sin Directa ni Régimen Especial)</span>
+      </div>
+
+      <div class="quick-search">
+        <input type="text" id="filtroUniversal" placeholder="🔍 Escribe palabras clave en el objeto (ej: consultoría ambiental, interventoría, obra vial, acueducto, software...)" onkeydown="if(event.key==='Enter') ejecutarConsulta();">
+        <button class="btn btn-main" id="btnBuscar" onclick="ejecutarConsulta()">
+          <span id="btnText">Buscar</span>
+        </button>
+      </div>
+
+      <div class="grid-filters">
+        <div class="field">
+          <label for="selDepto">Departamento</label>
+          <select id="selDepto" onchange="onDepartamentoChange()">
+            <option value="" selected>Todos los departamentos</option>
+            <option value="Amazonas">Amazonas</option>
+            <option value="Antioquia">Antioquia</option>
+            <option value="Arauca">Arauca</option>
+            <option value="Atlántico">Atlántico</option>
+            <option value="Bogotá D.C.">Bogotá D.C.</option>
+            <option value="Bolívar">Bolívar</option>
+            <option value="Boyacá">Boyacá</option>
+            <option value="Caldas">Caldas</option>
+            <option value="Caquetá">Caquetá</option>
+            <option value="Casanare">Casanare</option>
+            <option value="Cauca">Cauca</option>
+            <option value="Cesar">Cesar</option>
+            <option value="Chocó">Chocó</option>
+            <option value="Córdoba">Córdoba</option>
+            <option value="Cundinamarca">Cundinamarca</option>
+            <option value="Guainía">Guainía</option>
+            <option value="Guaviare">Guaviare</option>
+            <option value="Huila">Huila</option>
+            <option value="La Guajira">La Guajira</option>
+            <option value="Magdalena">Magdalena</option>
+            <option value="Meta">Meta</option>
+            <option value="Nariño">Nariño</option>
+            <option value="Norte de Santander">Norte de Santander</option>
+            <option value="Putumayo">Putumayo</option>
+            <option value="Quindío">Quindío</option>
+            <option value="Risaralda">Risaralda</option>
+            <option value="San Andrés y Providencia">San Andrés y Providencia</option>
+            <option value="Santander">Santander</option>
+            <option value="Sucre">Sucre</option>
+            <option value="Tolima">Tolima</option>
+            <option value="Valle del Cauca">Valle del Cauca</option>
+            <option value="Vaupés">Vaupés</option>
+            <option value="Vichada">Vichada</option>
+          </select>
+          <div class="field-hint">Selecciona para filtrar municipios</div>
+        </div>
+
+        <div class="field">
+          <label for="campoCiudad">Municipio / Ciudad</label>
+          <div id="contenedorCiudad">
+            <input type="text" id="txtCiudadLibre" list="dlCiudadesPrincipales" placeholder="Escribe cualquier municipio (ej: Neiva)">
+          </div>
+          <div class="field-hint" id="hintCiudad">Puedes buscar cualquier municipio sin elegir depto.</div>
+        </div>
+
+        <datalist id="dlCiudadesPrincipales">
+          <option value="Neiva"></option>
+          <option value="Pitalito"></option>
+          <option value="Garzón"></option>
+          <option value="La Plata"></option>
+          <option value="Bogotá"></option>
+          <option value="Medellín"></option>
+          <option value="Cali"></option>
+          <option value="Barranquilla"></option>
+          <option value="Bucaramanga"></option>
+          <option value="Cartagena"></option>
+          <option value="Ibagué"></option>
+          <option value="Pereira"></option>
+          <option value="Manizales"></option>
+          <option value="Cúcuta"></option>
+          <option value="Villavicencio"></option>
+          <option value="Pasto"></option>
+          <option value="Popayán"></option>
+          <option value="Armenia"></option>
+          <option value="Valledupar"></option>
+          <option value="Montería"></option>
+          <option value="Sincelejo"></option>
+        </datalist>
+
+        <div class="field">
+          <label for="filtroEntidad">Entidad Estatal</label>
+          <input type="text" id="filtroEntidad" placeholder="Ej: CAM, Alcaldía, Sena, Invías...">
+          <div class="field-hint">Filtro opcional</div>
+        </div>
+
+        <div class="field">
+          <label for="filtroModalidad">Modalidad de Contratación</label>
+          <select id="filtroModalidad">
+            <option value="SOLO_OFERTABLES" selected>🟢 Solo Ofertables (Sin Directa ni Régimen Especial)</option>
+            <option value="Mínima cuantía">Mínima Cuantía</option>
+            <option value="Licitación pública">Licitación Pública</option>
+            <option value="Selección abreviada menor cuantía">Selección Abreviada Menor Cuantía</option>
+            <option value="Selección abreviada subasta inversa">Selección Abreviada Subasta Inversa</option>
+            <option value="Concurso de méritos">Concurso de Méritos</option>
+            <option value="Regimen Especial">⚠️ Solo Régimen Especial</option>
+            <option value="Contratacion Directa">⚠️ Solo Contratación Directa</option>
+            <option value="TODAS">Todas las modalidades (Sin restricción)</option>
+          </select>
+          <div class="field-hint">Ofertables = procesos de libre postulación</div>
+        </div>
+
+        <div class="field">
+          <label for="filtroTipo">Tipo de Contrato</label>
+          <select id="filtroTipo">
+            <option value="" selected>Todos los tipos</option>
+            <option value="Obra">Obra</option>
+            <option value="Consultoría">Consultoría</option>
+            <option value="Suministro">Suministro</option>
+            <option value="Prestación de servicios">Prestación de Servicios</option>
+            <option value="Compraventa">Compraventa</option>
+            <option value="Interventoría">Interventoría</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filtroMinPrice">Cuantía Mínima (COP)</label>
+          <input type="number" id="filtroMinPrice" placeholder="Ej: 50000000">
+        </div>
+
+        <div class="field">
+          <label for="filtroMaxPrice">Cuantía Máxima (COP)</label>
+          <input type="number" id="filtroMaxPrice" placeholder="Sin límite">
+        </div>
+
+        <div class="field">
+          <label for="filtroFecha">Fecha de Publicación</label>
+          <select id="filtroFecha">
+            <option value="30" selected>Últimos 30 días</option>
+            <option value="15">Últimos 15 días</option>
+            <option value="7">Últimos 7 días</option>
+            <option value="90">Últimos 3 meses</option>
+            <option value="365">Último año</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filtroLimite">Procesos a Mostrar</label>
+          <select id="filtroLimite">
+            <option value="25" selected>25 más recientes</option>
+            <option value="50">50 más recientes</option>
+            <option value="100">100 más recientes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-sec" onclick="limpiarFiltros()">↻ Limpiar Filtros</button>
+        <button class="btn btn-sec" onclick="exportarCSV()">⬇ Descargar a Excel (CSV)</button>
+      </div>
+    </div>
+
+    <div id="lblStatus">Iniciando consulta de licitaciones públicas en SECOP II...</div>
+    <div class="contracts-list" id="contenedor"></div>
+
+  </div>
+
+  <script>
+    const MUNICIPIOS_POR_DEPTO = {
+      "Huila": ["Todos los municipios de Huila", "Neiva", "Acevedo", "A Agrado", "Aipe", "Algeciras", "Altamira", "Baraya", "Campoalegre", "Colombia", "Elías", "Garzón", "Gigante", "Guadalupe", "Hobo", "Iquira", "Isnos", "La Argentina", "La Plata", "Nátaga", "Oporapa", "Paicol", "Palermo", "Palestina", "Pital", "Pitalito", "Rivera", "Saladoblanco", "San Agustín", "Santa María", "Suaza", "Tarqui", "Tello", "Teruel", "Tesalia", "Timaná", "Villavieja", "Yaguará"],
+      "Bogotá D.C.": ["Bogotá"],
+      "Antioquia": ["Todos los municipios de Antioquia", "Medellín", "Abejorral", "Amagá", "Andes", "Apartadó", "Bello", "Caldas", "Caucasia", "Chigorodó", "Copacabana", "Envigado", "Girardota", "Itagüí", "La Ceja", "La Estrella", "Marinilla", "Rionegro", "Sabaneta", "Santa Fe de Antioquia", "Turbo", "Yarumal"],
+      "Cundinamarca": ["Todos los municipios de Cundinamarca", "Agua de Dios", "Anapoima", "Arbeláez", "Cajicá", "Chía", "Chocontá", "Cota", "Facatativá", "Funza", "Fusagasugá", "Gachancipá", "Girardot", "Guaduas", "La Calera", "La Mesa", "Madrid", "Mosquera", "Pacho", "Ricaurte", "Sibaté", "Silvania", "Soacha", "Sopó", "Subachoque", "Tabio", "Tenjo", "Tocancipá", "Ubaté", "Villeta", "Zipaquirá"],
+      "Valle del Cauca": ["Todos los municipios de Valle del Cauca", "Cali", "Buenaventura", "Buga", "Caicedonia", "Candelaria", "Cartago", "Dagua", "El Cerrito", "Florida", "Ginebra", "Guacarí", "Jamundí", "La Unión", "Palmira", "Pradera", "Roldanillo", "Sevilla", "Tuluá", "Yumbo", "Zarzal"],
+      "Santander": ["Todos los municipios de Santander", "Bucaramanga", "Barbosa", "Barrancabermeja", "Charalá", "Cimitarra", "Floridablanca", "Girón", "Lebrija", "Málaga", "Piedecuesta", "Puente Nacional", "Rionegro", "Sabana de Torres", "San Gil", "San Vicente de Chucurí", "Socorro", "Vélez"],
+      "Tolima": ["Todos los municipios de Tolima", "Ibagué", "Alpujarra", "Armero Guayabal", "Cajamarca", "Chaparral", "Espinal", "Flandes", "Fresno", "Guamo", "Honda", "Lérida", "Líbano", "Mariquita", "Melgar", "Natagaima", "Purificación", "Saldaña"],
+      "Boyacá": ["Todos los municipios de Boyacá", "Tunja", "Chiquinquirá", "Duitama", "Moniquirá", "Nobsa", "Paipa", "Puerto Boyacá", "Samacá", "Sogamoso", "Tibasosa", "Villa de Leyva"],
+      "Atlántico": ["Todos los municipios de Atlántico", "Barranquilla", "Baranoa", "Galapa", "Malambo", "Palmar de Varela", "Puerto Colombia", "Sabanalarga", "Sabanagrande", "Soledad"],
+      "Bolívar": ["Todos los municipios de Bolívar", "Cartagena", "Arjona", "Carmen de Bolívar", "Magangué", "Mompós", "San Juan Nepomuceno", "Turbaco", "Turbaná"],
+      "Caldas": ["Todos los municipios de Caldas", "Manizales", "Anserma", "Chinchiná", "La Dorada", "Riosucio", "Salamina", "Villamaría"],
+      "Risaralda": ["Todos los municipios de Risaralda", "Pereira", "Dosquebradas", "La Virginia", "Santa Rosa de Cabal"],
+      "Quindío": ["Todos los municipios de Quindío", "Armenia", "Calarcá", "Circasia", "La Tebaida", "Montenegro", "Quimbaya", "Salento"],
+      "Cauca": ["Todos los municipios de Cauca", "Popayán", "El Tambo", "Patía", "Piendamó", "Puerto Tejada", "Santander de Quilichao", "Silvia"],
+      "Nariño": ["Todos los municipios de Nariño", "Pasto", "Ipiales", "La Unión", "Samaniego", "Tumaco", "Túquerres"],
+      "Cesar": ["Todos los municipios de Cesar", "Valledupar", "Aguachica", "Agustín Codazzi", "Bosconia", "Curumaní", "La Jagua de Ibirico"],
+      "Córdoba": ["Todos los municipios de Córdoba", "Montería", "Cereté", "Lorica", "Montelíbano", "Planeta Rica", "Sahagún", "Tierralta"],
+      "Meta": ["Todos los municipios de Meta", "Villavicencio", "Acacías", "Granada", "Guamal", "Puerto Gaitán", "Puerto López", "Restrepo", "San Martín"],
+      "Magdalena": ["Todos los municipios de Magdalena", "Santa Marta", "Aracataca", "Ciénaga", "El Banco", "Fundación", "Plato"],
+      "Norte de Santander": ["Todos los municipios de Norte de Santander", "Cúcuta", "Los Patios", "Ocaña", "Pamplona", "Tibú", "Villa del Rosario"],
+      "La Guajira": ["Todos los municipios de La Guajira", "Riohacha", "Fonseca", "Maicao", "Manaure", "San Juan del Cesar", "Uribia"],
+      "Casanare": ["Todos los municipios de Casanare", "Yopal", "Aguazul", "Maní", "Monterrey", "Paz de Ariporo", "Tauramena", "Villanueva"],
+      "Caquetá": ["Todos los municipios de Caquetá", "Florencia", "Belén de los Andaquíes", "Cartagena del Chairá", "Curillo", "El Doncello", "Puerto Rico", "San Vicente del Caguán"],
+      "Putumayo": ["Todos los municipios de Putumayo", "Mocoa", "Orito", "Puerto Asís", "Puerto Leguízamo", "Sibundoy", "Valle del Guamuez"],
+      "Chocó": ["Todos los municipios de Chocó", "Quibdó", "Bahía Solano", "Condoto", "Istmina", "Nuquí", "Tadó"],
+      "Arauca": ["Todos los municipios de Arauca", "Arauca", "Arauquita", "Saravena", "Tame"],
+      "Sucre": ["Todos los municipios de Sucre", "Sincelejo", "Corozal", "San Marcos", "San Onofre", "Tolú", "Sampués"],
+      "Amazonas": ["Leticia", "Puerto Nariño"],
+      "Guainía": ["Inírida"],
+      "Guaviare": ["San José del Guaviare", "Calamar", "El Retorno"],
+      "Vaupés": ["Mitú"],
+      "Vichada": ["Puerto Carreño", "Cumaribo", "La Primavera", "Santa Rosalía"],
+      "San Andrés y Providencia": ["San Andrés", "Providencia"]
+    };
+
+    let ultimosDatos = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      ejecutarConsulta();
+    });
+
+    function onDepartamentoChange() {
+      const depto = document.getElementById('selDepto').value;
+      const contenedor = document.getElementById('contenedorCiudad');
+      const hint = document.getElementById('hintCiudad');
+
+      if (!depto) {
+        contenedor.innerHTML = `<input type="text" id="txtCiudadLibre" list="dlCiudadesPrincipales" placeholder="Escribe cualquier municipio (ej: Neiva)">`;
+        hint.textContent = 'Puedes buscar cualquier municipio sin elegir depto.';
+      } else {
+        const municipios = MUNICIPIOS_POR_DEPTO[depto] || ["Todos los municipios"];
+        let options = municipios.map(m => {
+          if (m.startsWith("Todos los")) {
+            return `<option value="" selected>${m}</option>`;
+          }
+          return `<option value="${m}">${m}</option>`;
+        }).join('');
+
+        options += `<option value="__MANUAL__">✍️ Escribir otro municipio...</option>`;
+
+        contenedor.innerHTML = `<select id="selCiudadDepto" onchange="onCiudadSelectChange()">${options}</select>`;
+        hint.textContent = `Municipios disponibles en ${depto}.`;
+      }
+    }
+
+    function onCiudadSelectChange() {
+      const sel = document.getElementById('selCiudadDepto');
+      if (sel && sel.value === '__MANUAL__') {
+        const contenedor = document.getElementById('contenedorCiudad');
+        contenedor.innerHTML = `<input type="text" id="txtCiudadManual" placeholder="Escribe el municipio de ${document.getElementById('selDepto').value}...">`;
+        document.getElementById('hintCiudad').textContent = 'Ingresa el nombre del municipio.';
+      }
+    }
+
+    function obtenerMunicipioSeleccionado() {
+      const selCiudad = document.getElementById('selCiudadDepto');
+      if (selCiudad) return selCiudad.value.trim();
+      const txtManual = document.getElementById('txtCiudadManual');
+      if (txtManual) return txtManual.value.trim();
+      const txtLibre = document.getElementById('txtCiudadLibre');
+      if (txtLibre) return txtLibre.value.trim();
+      return '';
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('filtroUniversal').value = '';
+      document.getElementById('selDepto').value = '';
+      onDepartamentoChange();
+      document.getElementById('filtroEntidad').value = '';
+      document.getElementById('filtroModalidad').value = 'SOLO_OFERTABLES';
+      document.getElementById('filtroTipo').value = '';
+      document.getElementById('filtroMinPrice').value = '';
+      document.getElementById('filtroMaxPrice').value = '';
+      document.getElementById('filtroFecha').value = '30';
+      ejecutarConsulta();
+    }
+
+    function extraerEnlace(item) {
+      if (item.urlproceso && item.urlproceso.url) {
+        return item.urlproceso.url;
+      }
+      if (item.id_del_proceso) {
+        return `https://community.secop.gov.co/Public/Tendering/OpportunityDetail/Index?noticeUID=${encodeURIComponent(item.id_del_proceso)}&isFromPublicArea=True&isModal=False`;
+      }
+      if (item.referencia_del_proceso) {
+        return `https://community.secop.gov.co/Public/Tendering/ContractNoticeManagement/Index?ProcessCode=${encodeURIComponent(item.referencia_del_proceso)}`;
+      }
+      return 'https://community.secop.gov.co/';
+    }
+
+    function formatearDinero(valor) {
+      if (!valor || isNaN(valor)) return 'No informado';
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        maximumFractionDigits: 0
+      }).format(valor);
+    }
+
+    async function ejecutarConsulta() {
+      const btn = document.getElementById('btnBuscar');
+      const btnText = document.getElementById('btnText');
+      const status = document.getElementById('lblStatus');
+      const contenedor = document.getElementById('contenedor');
+
+      btn.disabled = true;
+      btnText.innerHTML = '<span class="loader"></span> Buscando...';
+      status.textContent = 'Consultando licitaciones competitivas en SECOP II...';
+
+      const q = document.getElementById('filtroUniversal').value.trim();
+      const depto = document.getElementById('selDepto').value.trim();
+      const ciudad = obtenerMunicipioSeleccionado();
+      const entidad = document.getElementById('filtroEntidad').value.trim();
+      const modalidad = document.getElementById('filtroModalidad').value;
+      const tipoContrato = document.getElementById('filtroTipo').value;
+      const minPrice = document.getElementById('filtroMinPrice').value.trim();
+      const maxPrice = document.getElementById('filtroMaxPrice').value.trim();
+      const diasVentana = parseInt(document.getElementById('filtroFecha').value, 10);
+      const limit = document.getElementById('filtroLimite').value;
+
+      const columnas = [
+        'id_del_proceso',
+        'referencia_del_proceso',
+        'entidad',
+        'departamento_entidad',
+        'ciudad_entidad',
+        'nombre_del_procedimiento',
+        'descripci_n_del_procedimiento',
+        'fase',
+        'estado_de_apertura_del_proceso',
+        'modalidad_de_contratacion',
+        'tipo_de_contrato',
+        'precio_base',
+        'fecha_de_publicacion_del',
+        'fecha_de_ultima_publicaci',
+        'urlproceso'
+      ].join(',');
+
+      const fechaCorte = new Date();
+      fechaCorte.setDate(fechaCorte.getDate() - diasVentana);
+      const fechaCorteISO = fechaCorte.toISOString().split('T')[0] + 'T00:00:00.000';
+
+      let params = new URLSearchParams();
+      params.append('$select', columnas);
+      params.append('$order', 'fecha_de_publicacion_del DESC');
+      params.append('$limit', limit);
+
+      if (q) {
+        params.append('$q', q);
+      }
+
+      let condiciones = [`fecha_de_publicacion_del >= '${fechaCorteISO}'`];
+
+      if (modalidad === 'SOLO_OFERTABLES') {
+        condiciones.push(`modalidad_de_contratacion is not null`);
+        condiciones.push(`upper(modalidad_de_contratacion) not like '%DIRECTA%'`);
+        condiciones.push(`upper(modalidad_de_contratacion) not like '%ESPECIAL%'`);
+      } else if (modalidad === 'Regimen Especial') {
+        condiciones.push(`upper(modalidad_de_contratacion) like '%ESPECIAL%'`);
+      } else if (modalidad === 'Contratacion Directa') {
+        condiciones.push(`upper(modalidad_de_contratacion) like '%DIRECTA%'`);
+      } else if (modalidad !== 'TODAS') {
+        condiciones.push(`upper(modalidad_de_contratacion) like upper('%${modalidad}%')`);
+      }
+
+      if (depto) {
+        if (depto === 'Bogotá D.C.') {
+          condiciones.push(`(upper(departamento_entidad) like '%BOGOT%' or upper(ciudad_entidad) like '%BOGOT%')`);
+        } else {
+          condiciones.push(`upper(departamento_entidad) like upper('%${depto.replace(/'/g, "''")}%')`);
+        }
+      }
+
+      if (ciudad) {
+        condiciones.push(`upper(ciudad_entidad) like upper('%${ciudad.replace(/'/g, "''")}%')`);
+      }
+
+      if (entidad) {
+        condiciones.push(`upper(entidad) like upper('%${entidad.replace(/'/g, "''")}%')`);
+      }
+      if (tipoContrato) {
+        condiciones.push(`upper(tipo_de_contrato) like upper('%${tipoContrato}%')`);
+      }
+      if (minPrice) {
+        condiciones.push(`precio_base >= ${minPrice}`);
+      }
+      if (maxPrice) {
+        condiciones.push(`precio_base <= ${maxPrice}`);
+      }
+
+      params.append('$where', condiciones.join(' AND '));
+
+      const url = `https://www.datos.gov.co/resource/p6dx-8zbt.json?${params.toString()}`;
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 9000);
+
+      try {
+        const resp = await fetch(url, {
+          headers: { 'Accept': 'application/json' },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!resp.ok) {
+          const detalle = await resp.text();
+          throw new Error(`Código ${resp.status}: ${detalle}`);
+        }
+
+        const data = await resp.json();
+        ultimosDatos = data;
+
+        actualizarMetricas(data);
+
+        if (!data || data.length === 0) {
+          status.textContent = 'No se encontraron licitaciones con esos filtros en la ventana de fecha seleccionada.';
+          contenedor.innerHTML = `
+            <div style="background:#fff; border:1px dashed #cbd5e1; padding:36px; text-align:center; border-radius:10px;">
+              <h3 style="color:#334155; margin-bottom:6px;">Sin resultados encontrados</h3>
+              <p style="color:#64748b; font-size:0.9rem;">
+                Prueba ampliando la <strong>Fecha de Publicación</strong> a "Últimos 90 días" o verifica los términos de búsqueda.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        status.textContent = `Se encontraron ${data.length} procesos vigentes/ofertables ordenados por fecha de publicación:`;
+
+        contenedor.innerHTML = data.map(item => {
+          const directUrl = extraerEnlace(item);
+          const valor = formatearDinero(item.precio_base);
+          const pub = item.fecha_de_publicacion_del ? item.fecha_de_publicacion_del.slice(0, 10) : 'N/D';
+          const act = item.fecha_de_ultima_publicaci ? item.fecha_de_ultima_publicaci.slice(0, 10) : 'N/D';
+          const ref = item.referencia_del_proceso || item.id_del_proceso || '';
+
+          return `
+            <div class="contract-card">
+              <div class="card-top">
+                <div class="badges">
+                  <span class="badge badge-modalidad">${item.modalidad_de_contratacion || 'Modalidad General'}</span>
+                  <span class="badge badge-tipo">${item.tipo_de_contrato || 'Contrato'}</span>
+                  <span class="badge badge-abierto">${item.estado_de_apertura_del_proceso || 'Abierto'}</span>
+                  <span class="badge badge-fase">${item.fase || 'En Curso'}</span>
+                </div>
+                <span class="card-ref">${ref}</span>
+              </div>
+
+              <div class="card-title">${item.nombre_del_procedimiento || 'Sin título registrado'}</div>
+              <div class="card-desc">${item.descripci_n_del_procedimiento || 'Consulte los pliegos y anexos en el expediente oficial de SECOP II.'}</div>
+
+              <div class="meta-grid">
+                <div><strong>Entidad Contratante</strong>${item.entidad || 'N/D'}</div>
+                <div><strong>Ubicación</strong>${item.ciudad_entidad || ''}, ${item.departamento_entidad || 'Colombia'}</div>
+                <div><strong>Fecha Publicación</strong>📅 ${pub}</div>
+                <div><strong>Último Movimiento</strong>🔄 ${act}</div>
+              </div>
+
+              <div class="card-bottom">
+                <div class="price-tag">
+                  <strong>Presupuesto Oficial Estimado</strong>
+                  <span class="price-val">${valor}</span>
+                </div>
+                <div class="btn-actions">
+                  <button class="btn-copy" onclick="copiarRef('${ref}')">📋 Copiar Ref</button>
+                  <a href="${directUrl}" target="_blank" rel="noreferrer noopener" referrerpolicy="no-referrer" class="btn-direct">
+                    Ver Expediente en SECOP II ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.error(err);
+        const esTimeout = err.name === 'AbortError';
+        status.textContent = esTimeout ? 'El servidor tardó en responder.' : 'Aviso al consultar la base de datos.';
+        contenedor.innerHTML = `
+          <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:20px; border-radius:8px;">
+            <strong>${esTimeout ? 'Tiempo de espera agotado:' : 'Aviso:'}</strong> 
+            ${esTimeout ? 'La consulta tardó más de 9 segundos. Prueba reduciendo la ventana a "Últimos 15 días" o seleccionando un Departamento específico.' : err.message}
+          </div>
+        `;
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Buscar';
+      }
+    }
+
+    function actualizarMetricas(data) {
+      const countEl = document.getElementById('metricCount');
+      const totalEl = document.getElementById('metricTotal');
+      const avgEl = document.getElementById('metricAvg');
+
+      if (!data || data.length === 0) {
+        countEl.textContent = '0';
+        totalEl.textContent = '$ 0';
+        avgEl.textContent = '$ 0';
+        return;
+      }
+
+      let suma = 0;
+      let conPrecio = 0;
+
+      data.forEach(d => {
+        const val = parseFloat(d.precio_base);
+        if (!isNaN(val) && val > 0) {
+          suma += val;
+          conPrecio++;
+        }
+      });
+
+      const avg = conPrecio > 0 ? (suma / conPrecio) : 0;
+
+      countEl.textContent = data.length;
+      totalEl.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', notation: 'compact', maximumFractionDigits: 1 }).format(suma);
+      avgEl.textContent = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', notation: 'compact', maximumFractionDigits: 1 }).format(avg);
+    }
+
+    function copiarRef(texto) {
+      if (!texto) return;
+      navigator.clipboard.writeText(texto).then(() => {
+        alert(`Referencia copiada: ${texto}`);
+      });
+    }
+
+    function exportarCSV() {
+      if (ultimosDatos.length === 0) {
+        alert('No hay datos para exportar.');
+        return;
+      }
+      const headers = ["ID", "Referencia", "Entidad", "Departamento", "Municipio", "Modalidad", "Tipo_Contrato", "Cuantia_COP", "Fecha_Publicacion", "Ultima_Actualizacion", "Enlace_SECOP"];
+      const filas = ultimosDatos.map(r => [
+        `"${r.id_del_proceso || ''}"`,
+        `"${(r.referencia_del_proceso || '').replace(/"/g, '""')}"`,
+        `"${(r.entidad || '').replace(/"/g, '""')}"`,
+        `"${r.departamento_entidad || ''}"`,
+        `"${r.ciudad_entidad || ''}"`,
+        `"${r.modalidad_de_contratacion || ''}"`,
+        `"${r.tipo_de_contrato || ''}"`,
+        r.precio_base || 0,
+        `"${r.fecha_de_publicacion_del || ''}"`,
+        `"${r.fecha_de_ultima_publicaci || ''}"`,
+        `"${extraerEnlace(r)}"`
+      ]);
+
+      const csvContent = "\uFEFF" + [headers.join(";"), ...filas.map(e => e.join(";"))].join("\r\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Licitaciones_Ofertables_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
+</html>
+```[cite: 3]
